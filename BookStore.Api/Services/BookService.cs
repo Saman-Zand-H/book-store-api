@@ -14,10 +14,10 @@ namespace BookStore.Api.Services
             _bookRepository = bookRepository;
         }
 
-        public async Task<IEnumerable<BookCreateDto>> GetBooksAsync()
+        public async Task<IEnumerable<BookReadDto>> GetBooksAsync()
         {
             var books = await _bookRepository.GetBooksAsync();
-            return books.Adapt<IEnumerable<BookCreateDto>>();
+            return books.Adapt<IEnumerable<BookReadDto>>();
         }
 
         public async Task<BookReadDto?> GetBookAsync(string id)
@@ -36,6 +36,7 @@ namespace BookStore.Api.Services
         public async Task UpdateBookAsync(string id, BookUpdateDto bookDto)
         {
             var book = bookDto.Adapt<Book>();
+            book.Id = id;
             await _bookRepository.UpdateBookAsync(id, book);
         }
 

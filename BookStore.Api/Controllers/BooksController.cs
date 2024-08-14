@@ -17,7 +17,7 @@ namespace BookStore.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookCreateDto>>> Get() => Ok(await _booksService.GetBooksAsync());
+        public async Task<ActionResult<IEnumerable<BookReadDto>>> Get() => Ok(await _booksService.GetBooksAsync());
 
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<BookReadDto?>> Get([FromRoute] string id)
