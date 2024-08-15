@@ -1,6 +1,7 @@
 using MongoDB.Driver;
 using Microsoft.Extensions.Options;
 using BookStore.Api.Models;
+using BookStore.Api.Settings;
 
 namespace BookStore.Api.Repositories
 {

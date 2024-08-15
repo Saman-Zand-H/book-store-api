@@ -7,14 +7,9 @@ namespace BookStore.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BooksController : ControllerBase
+    public class BooksController(IBookService bookService) : ControllerBase
     {
-        private readonly IBookService _booksService;
-
-        public BooksController(IBookService booksService)
-        {
-            _booksService = booksService;
-        }
+        private readonly IBookService _booksService = bookService;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookReadDto>>> Get() => Ok(await _booksService.GetBooksAsync());
