@@ -7,6 +7,6 @@ namespace BookStore.Api.Services
     {
         Task<string> Register(UserCreateDto user);
         Task<string> Authenticate(string username, string password);
-        Task<UserReadDto?> GetUserAsync(string username);
+        Task<UserReadDto?> GetUserAsync(string token);
     }
 }

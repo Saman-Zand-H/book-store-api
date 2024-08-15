@@ -10,14 +10,20 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BookStore.Api.Services
 {
-    public class AuthService(IAuthRepository authRepository, JwtSettings jwtSettings) : IAuthService
+    public class AuthService(IAuthRepository authRepository, JwtSettings jwtSettings, ILogger<AuthService> logger) : IAuthService
     {
         private readonly JwtSettings _jwtSettings = jwtSettings;
         private readonly IAuthRepository _authRepository = authRepository;
+        private readonly ILogger<AuthService> _logger = logger;
 
         public async Task<string> Register(UserCreateDto userDto)
         {
-            var user = userDto.Adapt<User>();
+            var user = await _authRepository.GetUserByUsernameAsync(userDto.Username);
+            if (user != null)
+            {
+                throw new Exception("Username already exists");
+            }
+            user = userDto.Adapt<User>();
             await _authRepository.AddUserAsync(user);
             return GenerateJwtToken(user);
         }
@@ -33,15 +39,17 @@ namespace BookStore.Api.Services
             return GenerateJwtToken(user);
         }
 
-        public async Task<UserReadDto?> GetUserAsync(string username)
+        public async Task<UserReadDto?> GetUserAsync(string token)
         {
-            var user = await _authRepository.GetUserByUsernameAsync(username);
-            if (user == null)
+            var userId = JwtToUserId(token);
+            if (string.IsNullOrEmpty(userId))
             {
                 return null;
             }
 
-            return user.Adapt<UserReadDto>();
+            _logger.LogInformation("User ID: {userId}", userId);
+            var user = await _authRepository.GetUserByIdAsync(userId);
+            return user?.Adapt<UserReadDto>();
         }
 
         private string GenerateJwtToken(User user)
@@ -52,7 +60,7 @@ namespace BookStore.Api.Services
             {
                 Subject = new ClaimsIdentity(
                 [
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                    new Claim(ClaimTypes.Name, user.Id!)
                 ]),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -60,5 +68,21 @@ namespace BookStore.Api.Services
 
             return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
         }
+
+        private string? JwtToUserId(string jwt)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                var token = tokenHandler.ReadJwtToken(jwt);
+                return token.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reading JWT token");
+                return null;
+            }
+        }
+
     }
 }

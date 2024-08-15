@@ -51,16 +51,12 @@ namespace BookStore.Api.Controllers
         [Authorize]
         public async Task<ActionResult<User?>> Get()
         {
-            string? username = User.FindFirst(ClaimTypes.Name)?.Value;
-            if (string.IsNullOrEmpty(username))
-            {
-                return Unauthorized();
-            }
+            string jwt = Request.Headers.Authorization.ToString().Split(" ").Last();
+            var user = await _authService.GetUserAsync(jwt);
 
-            var user = await _authService.GetUserAsync(username);
             if (user == null)
             {
-                return NotFound();
+                return Ok("user");
             }
 
             return Ok(user);
