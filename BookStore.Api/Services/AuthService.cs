@@ -27,7 +27,7 @@ namespace BookStore.Api.Services
             var user = await _authRepository.GetUserByUsernameAsync(username);
             if (user == null || !user.VerifyPassword(password))
             {
-                return null;
+                throw new Exception("Invalid username or password");
             }
 
             return GenerateJwtToken(user);

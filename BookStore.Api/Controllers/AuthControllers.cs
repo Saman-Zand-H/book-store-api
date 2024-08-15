@@ -46,5 +46,24 @@ namespace BookStore.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<User?>> Get()
+        {
+            string? username = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(username))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _authService.GetUserAsync(username);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
     }
 }
