@@ -5,6 +5,6 @@ namespace Account.Data.DbContexts
 {
     public class AccountDbContext(DbContextOptions<AccountDbContext> options) : DbContext(options)
     {
-        public DbSet<User> Accounts { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

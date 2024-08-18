@@ -1,8 +1,9 @@
+using Account.Domain.Models;
 using Core.Domain.Repositories;
 
 namespace Account.Domain.Repositories
 {
-    public interface IUserRepository<T> : IGenericRepository<T> where T : class
+    public interface IUserRepository : IGenericRepository<User>
     {
     }
 }
