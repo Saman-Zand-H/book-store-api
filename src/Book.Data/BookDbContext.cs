@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Book.Data.DbContexts
+namespace Book.Data
 {
     public class BookDbContext(DbContextOptions<BookDbContext> options) : DbContext(options)
     {
-        public DbSet<Domain.Models.Book> Books { get; set; } = null!;
+        public DbSet<Domain.Models.Book> Books { get; set; }
     }
 }

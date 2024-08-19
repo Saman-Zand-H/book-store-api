@@ -20,9 +20,11 @@ namespace Core.Api
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
+            string connectionString = _configuration.GetConnectionString("DefaultConnection")!;
+
             // TODO: use environment variables
-            AddAccount.RegisterServices(services, _configuration["Jwt:SecretKey"]!, _configuration["Jwt:Issuer"]!, _configuration["Jwt:Audience"]!);
-            AddBook.RegisterServices(services);
+            AddAccount.RegisterServices(services, _configuration["Jwt:SecretKey"]!, _configuration["Jwt:Issuer"]!, _configuration["Jwt:Audience"]!, connectionString);
+            AddBook.RegisterServices(services, connectionString);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

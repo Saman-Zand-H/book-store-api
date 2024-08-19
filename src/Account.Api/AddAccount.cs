@@ -1,10 +1,10 @@
 using System.Text;
 using Account.App.Settings;
-using Account.Data.DbContexts;
+using Account.Data;
 using Account.Data.Repositories;
 using Account.Domain.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,11 +12,17 @@ namespace Account.Api
 {
     public class AddAccount
     {
-        public static IServiceCollection RegisterServices(IServiceCollection services, string secretKey, string issuer, string audience)
+        public static IServiceCollection RegisterServices(
+            IServiceCollection services,
+            string secretKey,
+            string issuer,
+            string audience,
+            string connectionString
+        )
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AddAccount).Assembly));
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddDbContext<AccountDbContext>();
+            services.AddDbContext<AccountDbContext>(opts => opts.UseSqlServer(connectionString));
 
             var jwtSettings = new JwtSettings
             {
