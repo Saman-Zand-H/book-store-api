@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Account.App.Commands;
 using Account.App.Queries;
 using Account.Domain.Models;
@@ -10,10 +9,10 @@ namespace Account.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(ISender mediator) : ControllerBase
+    public class UserController(IMediator mediator) : ControllerBase
     {
         // add mediatr 
-        private readonly ISender _mediator = mediator;
+        private readonly IMediator _mediator = mediator;
 
         [HttpPost("register")]
         public async Task<ActionResult<string?>> Register([FromBody] CreateUserCommand user)
